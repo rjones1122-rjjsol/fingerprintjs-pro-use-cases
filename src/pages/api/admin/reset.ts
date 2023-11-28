@@ -56,6 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 async function tryToReset(req: NextApiRequest, res: NextApiResponse, ruleChecks: RuleCheck[]) {
   // Get requestId and visitorId from the client.
+  console.log('resetting');
 
   const { visitorId, requestId } = req.body as ResetRequest;
 
