@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import { FunctionComponent, ReactNode, useMemo } from 'react';
 import { UseCaseWrapper } from '../../client/components/common/UseCaseWrapper/UseCaseWrapper';
 import {
@@ -34,6 +35,12 @@ import Link from 'next/link';
 import externalLinkArrow from '../../client/img/externalLinkArrow.svg';
 import Image from 'next/image';
 import styles from './playground.module.scss';
+
+const PLAYGROUND_COPY = {
+  androidOnly: 'Applicable only to Android devices',
+  iosOnly: 'Applicable only to iOS devices',
+  mobileOnly: 'Applicable only to iOS and Android devices',
+} as const;
 
 const DocsLink: FunctionComponent<{ children: ReactNode; href: string; style?: React.CSSProperties }> = ({
   children,
@@ -279,7 +286,7 @@ function Playground() {
           </DocsLink>,
         ],
       },
-      { content: 'Applicable only for iOS and Android devices', cellStyle: { backgroundColor: GRAY } },
+      { content: PLAYGROUND_COPY.mobileOnly, cellStyle: { backgroundColor: GRAY } },
     ],
     [
       {
@@ -289,7 +296,7 @@ function Playground() {
           </DocsLink>,
         ],
       },
-      { content: 'Applicable only for iOS and Android devices', cellStyle: { backgroundColor: GRAY } },
+      { content: PLAYGROUND_COPY.mobileOnly, cellStyle: { backgroundColor: GRAY } },
     ],
     [
       {
@@ -299,7 +306,7 @@ function Playground() {
           </DocsLink>,
         ],
       },
-      { content: 'Applicable only for iOS and Android devices', cellStyle: { backgroundColor: GRAY } },
+      { content: PLAYGROUND_COPY.mobileOnly, cellStyle: { backgroundColor: GRAY } },
     ],
     [
       {
@@ -309,7 +316,7 @@ function Playground() {
           </DocsLink>,
         ],
       },
-      { content: 'Applicable only to Android devices', cellStyle: { backgroundColor: GRAY } },
+      { content: PLAYGROUND_COPY.androidOnly, cellStyle: { backgroundColor: GRAY } },
     ],
     [
       {
@@ -319,7 +326,7 @@ function Playground() {
           </DocsLink>,
         ],
       },
-      { content: 'Applicable only to Android devices', cellStyle: { backgroundColor: GRAY } },
+      { content: PLAYGROUND_COPY.androidOnly, cellStyle: { backgroundColor: GRAY } },
     ],
     [
       {
@@ -329,7 +336,7 @@ function Playground() {
           </DocsLink>,
         ],
       },
-      { content: 'Applicable only to Android devices', cellStyle: { backgroundColor: GRAY } },
+      { content: PLAYGROUND_COPY.androidOnly, cellStyle: { backgroundColor: GRAY } },
     ],
 
     [
@@ -340,7 +347,7 @@ function Playground() {
           </DocsLink>,
         ],
       },
-      { content: 'Applicable only to iOS devices', cellStyle: { backgroundColor: GRAY } },
+      { content: PLAYGROUND_COPY.iosOnly, cellStyle: { backgroundColor: GRAY } },
     ],
   ];
 
