@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { deleteBlockedIp, saveBlockedIp } from '../../../server/botd-firewall/blockedIpsDatabase';
+import { deleteBlockedIp, getBlockedIps, saveBlockedIp } from '../../../server/botd-firewall/blockedIpsDatabase';
 import {
   buildFirewallRules,
-  getBlockedIps,
   updateFirewallRuleset as updateCloudflareRuleset,
 } from '../../../server/botd-firewall/updateFirewallRule';
 import { FingerprintJsServerApiClient, isEventError } from '@fingerprintjs/fingerprintjs-pro-server-api';
@@ -25,7 +24,7 @@ export type BlockIpResponse = {
   blocked?: boolean;
 };
 
-export default async function blockIp(req: NextApiRequest, res: NextApiResponse) {
+export default async function blockIp(req: NextApiRequest, res: NextApiResponse<BlockIpResponse>) {
   // This API route accepts only POST requests.
   if (!ensurePostRequest(req, res)) {
     return;
@@ -35,7 +34,7 @@ export default async function blockIp(req: NextApiRequest, res: NextApiResponse)
   const { ip, blocked, requestId } = req.body as BlockIpPayload;
   const { okay, message } = await validateBlockIpRequest(requestId, ip, req);
   if (!okay) {
-    return res.status(403).json({ result: 'error', message } satisfies BlockIpResponse);
+    return res.status(403).json({ result: 'error', message });
   }
 
   try {
@@ -52,11 +51,11 @@ export default async function blockIp(req: NextApiRequest, res: NextApiResponse)
     await updateCloudflareRuleset(newRules);
 
     // Return success
-    return res.status(200).json({ result: 'success', message: 'OK', ip, blocked } satisfies BlockIpResponse);
+    return res.status(200).json({ result: 'success', message: 'OK', ip, blocked });
   } catch (error) {
     console.log(error);
     // Catch unexpected errors and return 500 to the client
-    return res.status(500).json({ result: 'error', message: 'Internal server error.' } satisfies BlockIpResponse);
+    return res.status(500).json({ result: 'error', message: 'Internal server error.' });
   }
 }
 
