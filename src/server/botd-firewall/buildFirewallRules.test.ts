@@ -1,4 +1,4 @@
-import { buildFirewallRules } from './updateFirewallRule';
+import { buildFirewallRules } from './buildFirewallRules';
 import { describe, expect, it } from 'vitest';
 
 describe('buildFirewallRules', () => {
@@ -16,7 +16,6 @@ describe('buildFirewallRules', () => {
     expect(rules).toEqual(expectedRules);
   });
 
-  // Add more test cases here...
   it('should build multiple firewall rules correctly', async () => {
     const blockedIps = [
       '68.237.223.37',

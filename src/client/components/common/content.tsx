@@ -28,6 +28,7 @@ export type UseCase = {
     title: string;
     url: string;
   }[];
+  hiddenInNavigation?: boolean;
 };
 
 export const USE_CASES = {
@@ -227,6 +228,7 @@ export const USE_CASES = {
     title: 'Paywall',
     titleMeta: 'Fingerprint Use Cases | Content Paywall Live Demo',
     url: '/paywall',
+    articleUrl: 'https://fingerprint.com/blog/how-paywalls-work-paywall-protection-tutorial/',
     iconSvg: PaywallIcon,
     descriptionHomepage: [
       <p key="1">
@@ -247,11 +249,11 @@ export const USE_CASES = {
       <>Try switching to incognito mode or clearing cookies to go around the paywall and read more articles.</>,
     ],
     moreResources: [
-      // {
-      //   type: 'Use case tutorial',
-      //   title: 'Paywall',
-      //   url: 'https://fingerprint.com/use-cases/paywall/',
-      // },
+      {
+        type: 'Use case tutorial',
+        title: 'Paywall',
+        url: 'https://fingerprint.com/blog/how-paywalls-work-paywall-protection-tutorial/',
+      },
     ],
   },
   personalization: {
@@ -394,9 +396,13 @@ export const USE_CASES = {
         </p>
         <p>
           Fingerprint Bot Detection allows you to identify sophisticated bots and headless browsers by collecting and
-          analyzing browser signals. See our <Link href={'/web-scraping'}>Web scraping demo</Link> for an example of
-          protecting client-site content from bots. This demo goes a step further and uses Bot detection results to
-          block previously recognized bots on their next visit completely — before they even reach your web page.
+          analyzing browser signals. See our{' '}
+          <Link href={'/web-scraping'} target="_blank">
+            Web scraping demo
+          </Link>{' '}
+          for an example of protecting client-site content from bots. This demo goes a step further and uses Bot
+          detection results to block previously recognized bots on their next visit completely — before they even reach
+          your web page.
         </p>
       </>
     ),
@@ -406,7 +412,10 @@ export const USE_CASES = {
     instructions: [
       <>
         Use a locally running instance of Playwright, Cypress, or another headless browser tool to visit the{' '}
-        <Link href={'/web-scraping'}>web scraping demo</Link>.
+        <Link href={'/web-scraping'} target="_blank">
+          web scraping demo
+        </Link>
+        .
       </>,
       <>
         Your headless browser will be recognized as a bot, and your IP address will be saved to the bot visit database
@@ -416,7 +425,13 @@ export const USE_CASES = {
         Click <b>Block this bot IP</b> to prevent the bot from loading the page at all going forward. For demo purposes,
         you are only allowed to block your own IP.
       </>,
-      <>Try visiting the web scraping demo again (either as a bot or using your regular browser).</>,
+      <>
+        Try visiting the{' '}
+        <Link href={'/web-scraping'} target="_blank">
+          web scraping demo
+        </Link>{' '}
+        again (either as a bot or using your regular browser).
+      </>,
       <>Your IP address is blocked from the page completely.</>,
     ],
     moreResources: [
@@ -452,9 +467,14 @@ export const PLAYGROUND_METADATA: Pick<
   descriptionMeta: 'Analyze your browser with Fingerprint Pro and see all the available signals.',
 };
 
-export const USE_CASES_ARRAY = Object.values(USE_CASES);
+export const USE_CASES_ARRAY = Object.values(USE_CASES)
+  // TODO: Remove this when ready the final of bot firewall demo is ready
+  .filter((useCase) => useCase.url !== USE_CASES.botFirewall.url);
 
-export const USE_CASES_NAVIGATION = USE_CASES_ARRAY.map((useCase) => ({ title: useCase.title, url: useCase.url }));
+export const USE_CASES_NAVIGATION = USE_CASES_ARRAY.map((useCase) => ({
+  title: useCase.title,
+  url: useCase.url,
+}));
 export const PLATFORM_NAVIGATION = [PLAYGROUND_METADATA];
 
 type HomePageCard = Pick<UseCase, 'title' | 'url' | 'iconSvg' | 'descriptionHomepage'>;

@@ -9,7 +9,8 @@ import styles from './botFirewall.module.scss';
 import { BlockIpPayload, BlockIpResponse } from '../api/bot-firewall/block-ip';
 import { useVisitorData } from '@fingerprintjs/fingerprintjs-pro-react';
 import classnames from 'classnames';
-import { OptionsObject, enqueueSnackbar } from 'notistack';
+import { OptionsObject as SnackbarOptions, enqueueSnackbar } from 'notistack';
+import { BOT_FIREWALL_COPY } from '../../client/bot-firewall/botFirewallCopy';
 
 const formatDate = (date: string) => {
   const d = new Date(date);
@@ -19,7 +20,7 @@ const formatDate = (date: string) => {
   })} ${d.toLocaleTimeString('gb', { hour: '2-digit', minute: '2-digit' })}`;
 };
 
-const snackbarOptions: OptionsObject = {
+const snackbarOptions: SnackbarOptions = {
   autoHideDuration: 3000,
   anchorOrigin: { horizontal: 'right', vertical: 'bottom' },
 };
@@ -40,7 +41,7 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
     refetch: refetchBotVisits,
     isLoading: isLoadingBotVisits,
   } = useQuery({
-    queryKey: ['botVisits'],
+    queryKey: ['get bot visits'],
     queryFn: (): Promise<BotVisit[]> => {
       return fetch('/api/bot-firewall/get-bot-visits').then((res) => res.json());
     },
@@ -48,7 +49,7 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
 
   // Get a list of currently blocked IP addresses
   const { data: blockedIps, refetch: refetchBlockedIps } = useQuery({
-    queryKey: ['blockedIps'],
+    queryKey: ['get blocked IPs'],
     queryFn: (): Promise<string[]> => {
       return fetch('/api/bot-firewall/get-blocked-ips').then((res) => res.json());
     },
@@ -56,6 +57,7 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
 
   // Post request mutation to block/unblock IP addresses
   const { mutate: blockIp, isLoading: isLoadingBlockIp } = useMutation({
+    mutationKey: ['block IP'],
     mutationFn: async ({ ip, blocked }: Omit<BlockIpPayload, 'requestId'>) => {
       const { requestId } = await getVisitorData({ ignoreCache: true });
       const response = await fetch('/api/bot-firewall/block-ip', {
@@ -106,11 +108,14 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
               refetchBlockedIps();
             }}
             className={styles.reloadButton}
-            disabled={isLoadingBotVisits}
+            disabled={isLoadingBotVisits || isLoadingVisitorData}
           >
             {isLoadingBotVisits || isLoadingVisitorData ? 'Loading ⏳' : 'Reload'}
           </Button>
-          <i>Note: For the purposes of this demo, you can only block/unblock your own IP address ({visitorData?.ip})</i>
+          <i>
+            Note: For the purposes of this demo, you can only block/unblock your own IP address ({visitorData?.ip}). The
+            block expires after one hour. The database of bot visits is cleared on every website update.
+          </i>
           <table className={styles.ipsTable}>
             <thead>
               <tr>
@@ -142,8 +147,8 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
                           {isLoadingBlockIp
                             ? 'Working on it ⏳'
                             : isIpBlocked(botVisit?.ip)
-                              ? 'Unblock'
-                              : 'Block this IP'}
+                              ? BOT_FIREWALL_COPY.unblockIp
+                              : BOT_FIREWALL_COPY.blockIp}
                         </Button>
                       ) : (
                         <>-</>
