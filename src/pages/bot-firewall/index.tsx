@@ -16,7 +16,8 @@ import WaveIcon from '../../client/img/wave.svg';
 import ChevronIcon from '../../client/img/chevronBlack.svg';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, PropsWithChildren, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const DEFAULT_DISPLAYED_VISITS = 10;
 const DISPLAYED_VISITS_INCREMENT = 10;
@@ -121,13 +122,14 @@ const BotVisitAction: FunctionComponent<BotVisitActionProps> = ({
 }) => {
   if (isVisitorsIp) {
     return (
-      <button
+      <Button
         onClick={() => blockIp({ ip, blocked: !isBlockedNow })}
         disabled={isLoadingBlockIp}
-        className={isBlockedNow ? styles.unblockIpButton : styles.blockIpButton}
+        size="medium"
+        variant={isBlockedNow ? 'danger' : 'green'}
       >
         {isLoadingBlockIp ? 'Working on it ⏳' : isBlockedNow ? BOT_FIREWALL_COPY.unblockIp : BOT_FIREWALL_COPY.blockIp}
-      </button>
+      </Button>
     );
   }
   return (
@@ -153,6 +155,28 @@ const BotTypeInfo: FunctionComponent = () => (
   >
     <Image src={InfoIcon} alt="" />
   </Tooltip>
+);
+
+const InstructionPrompt: FunctionComponent<PropsWithChildren> = ({ children }) => (
+  <div className={styles.instructionsPrompt}>
+    <motion.div
+      initial={{ rotate: 0 }}
+      whileInView={{ rotate: [30, -30, 30, -30, 30, -30, 30, -30, 30, -30, 0] }}
+      transition={{ duration: 1.5 }}
+      viewport={{ once: true }}
+    >
+      <Image src={WaveIcon} alt="" />
+    </motion.div>
+    <motion.div
+      // reveals content from left to right
+      initial={{ clipPath: 'polygon(0 0, 0 0, 0 100%, 0% 100%)' }}
+      whileInView={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.5 }}
+    >
+      {children}
+    </motion.div>
+  </div>
 );
 
 export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
@@ -204,13 +228,10 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
             >
               {isLoading ? 'Loading ⏳' : 'Reload bot visits'}
             </Button>
-            <div className={styles.instructionsPrompt}>
-              <Image src={WaveIcon} alt="" />
-              <div>
-                We recommend reading the <Link href={`#${INSTRUCTION_ANCHOR_ID}`}>instructions</Link> before trying the
-                demo!
-              </div>
-            </div>
+            <InstructionPrompt>
+              We recommend reading the <Link href={`#${INSTRUCTION_ANCHOR_ID}`}>instructions</Link> before trying the
+              demo!
+            </InstructionPrompt>
           </div>
 
           {/* Only displayed on large screens */}
@@ -289,6 +310,7 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
           <Button
             size="medium"
             className={styles.loadMore}
+            outlined
             onClick={() => setDisplayedVisits(displayedVisits + DISPLAYED_VISITS_INCREMENT)}
             disabled={!botVisits || displayedVisits >= botVisits.length}
           >
