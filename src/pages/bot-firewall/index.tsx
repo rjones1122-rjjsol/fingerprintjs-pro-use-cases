@@ -235,12 +235,16 @@ export const BotFirewall: NextPage<CustomPageProps> = ({ embed }) => {
       <UseCaseWrapper
         useCase={USE_CASES.botFirewall}
         embed={embed}
-        contentSx={{ maxWidth: 'none' }}
         instructionsNote={`For the purposes of this demo, you can only block/unblock your own IP address (${visitorData?.ip}). The block expires after one hour. The database of bot visits is cleared on every website update.`}
       >
         <div className={styles.container}>
           <div className={styles.header}>
-            <h2 className={styles.title}>Detected bot visits</h2>
+            <h2 className={styles.title}>
+              Bots detected on{' '}
+              <Link href="/web-scraping" target="_blank">
+                Web scraping demo
+              </Link>
+            </h2>
             <Button
               size="small"
               outlined
